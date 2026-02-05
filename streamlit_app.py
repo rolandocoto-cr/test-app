@@ -3,8 +3,6 @@ import requests
 
 st.title("Cook Islands Māori TTS")
 
-user_input = st.text_input("Enter your text:", value="Kia orana kōtou kātoatoa")
-
 # Initialize session state
 if 'processing' not in st.session_state:
     st.session_state.processing = False
@@ -12,9 +10,43 @@ if 'audio_bytes' not in st.session_state:
     st.session_state.audio_bytes = None
 if 'error_message' not in st.session_state:
     st.session_state.error_message = None
+if 'user_text' not in st.session_state:
+    st.session_state.user_text = "Kia orana kōtou kātoatoa"
+if 'input_key' not in st.session_state:
+    st.session_state.input_key = 0
+
+# Callbacks for each character button
+def add_char(char):
+    st.session_state.user_text = st.session_state.user_text + char
+    st.session_state.input_key += 1  # Change key to force refresh
+
+# Callback when user types in the text box
+def on_text_change():
+    st.session_state.user_text = st.session_state[f"text_input_{st.session_state.input_key}"]
+
+# Text input with dynamic key
+st.text_input(
+    "Enter your text:", 
+    value=st.session_state.user_text,
+    key=f"text_input_{st.session_state.input_key}",
+    on_change=on_text_change
+)
+
+# Special character buttons in a horizontal row
+st.caption("Insert special characters:")
+
+special_chars = ['ā', 'ē', 'ī', 'ō', 'ū', 'ꞌ']
+cols = st.columns(len(special_chars))
+
+for idx, char in enumerate(special_chars):
+    with cols[idx]:
+        st.button(char, key=f"btn_{idx}", use_container_width=True, on_click=add_char, args=(char,))
+
+# Spacer
+st.write("")
 
 # Button with dynamic text and disabled state
-button_text = "Please wait..." if st.session_state.processing else "Process"
+button_text = "Please wait..." if st.session_state.processing else "Generate audio"
 button_clicked = st.button(button_text, disabled=st.session_state.processing)
 
 if button_clicked:
@@ -26,9 +58,12 @@ if button_clicked:
 
 if st.session_state.processing:
     try:
+        # Get API URL from secrets
+        api_url = st.secrets["API_URL"]
+        
         response = requests.post(
-            "https://fastspeech2-cim-790340752928.us-east1.run.app/synthesize",
-            json={"text": user_input},
+            api_url,
+            json={"text": st.session_state.user_text},
             timeout=60
         )
         
