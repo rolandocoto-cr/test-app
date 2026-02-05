@@ -1,6 +1,8 @@
 import streamlit as st
 import requests
 
+st.set_page_config(page_title="Cook Islands Māori TTS")
+
 # Initialize session state for page navigation
 if 'page' not in st.session_state:
     st.session_state.page = 'main'
@@ -29,7 +31,7 @@ if st.session_state.page == 'about':
     st.title("About the Project")
     st.markdown("This page uses a [FastSpeech2 Text-to-Speech](https://arxiv.org/abs/2006.04558) model that transforms text in Cook Islands Māori into a synthetically generated voice recording.")
     #st.write("")
-    st.markdown("The model was developed by Jesyn James, Sally Akevai Nicholas, Rolando Coto-Solano, and students from University of Auckland. You can read more about the project here: [Development of Community-Oriented Text-to-Speech Models for Māori ‘Avaiki Nui (Cook Islands Māori)](https://aclanthology.org/2024.lrec-main.432/)")
+    st.markdown("The model was developed by Jesyn James, Sally Akevai Nicholas, Rolando Coto-Solano, and students from University of Auckland. You can read more about the project here: [Development of Community-Oriented Text-to-Speech Models for Māori ꞌAvaiki Nui (Cook Islands Māori)](https://aclanthology.org/2024.lrec-main.432/)")
     st.write("This is part of a larger project by Sally Akevai Nicholas to document the Cook Islands Māori language.")
     st.write("")
     st.button("← Back to TTS", on_click=go_to_main)
